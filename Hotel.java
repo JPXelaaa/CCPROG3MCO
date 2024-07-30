@@ -9,6 +9,9 @@ public class Hotel {
     private double basePrice = 1299.0; // Default base price
     private static final Scanner scanner = new Scanner(System.in);
     private double[] priceModifiers;
+    private Queue<Integer> availableStandardNumbers;
+    private Queue<Integer> availableDeluxeNumbers;
+    private Queue<Integer> availableExecutiveNumbers;
 
     public Hotel(String name) {
         this.name = name;
@@ -16,6 +19,9 @@ public class Hotel {
         this.reservations = new ArrayList<>();
         this.priceModifiers = new double[30];
         Arrays.fill(this.priceModifiers, 1.0); // Default modifier is 100%
+        this.availableStandardNumbers = new PriorityQueue<>();
+        this.availableDeluxeNumbers = new PriorityQueue<>();
+        this.availableExecutiveNumbers = new PriorityQueue<>();
         addDefaultRoom();
     }
 
@@ -25,30 +31,20 @@ public class Hotel {
     }
 
     private String generateRoomName(RoomType roomType) {
-        int roomNumberStandard = 1;
-        int roomNumberDeluxe = 1;
-        int roomNumberExecutive = 1;
-        for (Room room : rooms) {
-            RoomType type = room.getRoomType();
-            if (type == RoomType.STANDARD) {
-                roomNumberStandard++;
-            }
-            if (type == RoomType.DELUXE) {
-                roomNumberDeluxe++;
-            }
-            if (type == RoomType.EXECUTIVE) {
-                roomNumberExecutive++;
-            }
+        int roomNumber;
+        switch (roomType) {
+            case STANDARD:
+                roomNumber = availableStandardNumbers.isEmpty() ? getNextRoomNumber(RoomType.STANDARD) : availableStandardNumbers.poll();
+                return String.format("S%02d", roomNumber);
+            case DELUXE:
+                roomNumber = availableDeluxeNumbers.isEmpty() ? getNextRoomNumber(RoomType.DELUXE) : availableDeluxeNumbers.poll();
+                return String.format("D%02d", roomNumber);
+            case EXECUTIVE:
+                roomNumber = availableExecutiveNumbers.isEmpty() ? getNextRoomNumber(RoomType.EXECUTIVE) : availableExecutiveNumbers.poll();
+                return String.format("E%02d", roomNumber);
+            default:
+                throw new IllegalArgumentException("Unknown Room Type");
         }
-        if(roomType == RoomType.STANDARD) {
-            return String.format("S%02d", roomNumberStandard);
-        }
-        else if(roomType == RoomType.DELUXE) {
-            return String.format("D%02d", roomNumberDeluxe);
-        }
-        else
-            return String.format("E%02d", roomNumberExecutive);
-
     }
 
     public String getName() {
@@ -80,6 +76,21 @@ public class Hotel {
         }
     }
 
+    private int getNextRoomNumber(RoomType roomType) {
+        int roomNumber = 1;
+        int currentRoomNumber;
+        for (Room room : rooms) {
+            RoomType type = room.getRoomType();
+            if (type == roomType) {
+                currentRoomNumber = Integer.parseInt(room.getName().substring(1));
+                if (currentRoomNumber >= roomNumber) {
+                    roomNumber = currentRoomNumber + 1;
+                }
+            }
+        }
+        return roomNumber;
+    }
+
     public double getPriceModifier(int day) {
         if (day >= 1 && day <= 30) {
             return this.priceModifiers[day - 1];
@@ -109,6 +120,22 @@ public class Hotel {
         return true;
     }
 
+    private void releaseRoomNumber(Room room) {
+        int roomNumber = Integer.parseInt(room.getName().substring(1));
+        RoomType roomType = room.getRoomType();
+        switch (roomType) {
+            case STANDARD:
+                availableStandardNumbers.add(roomNumber);
+                break;
+            case DELUXE:
+                availableDeluxeNumbers.add(roomNumber);
+                break;
+            case EXECUTIVE:
+                availableExecutiveNumbers.add(roomNumber);
+                break;
+        }
+    }
+
     public boolean removeRoom(String roomName) {
         String response;
         Room roomToRemove = findRoom(roomName);
@@ -116,24 +143,33 @@ public class Hotel {
             System.out.print("\nDo you want to remove this room? (Y/N): ");
             response = scanner.nextLine();
             if (response.equalsIgnoreCase("N")) {
-              return false;
-            }
-            else if(!response.equalsIgnoreCase("Y")) {
-              System.out.print("\nInvalid choice. Exiting modification.\n");
-              return false;
+                return false;
+            } else if (!response.equalsIgnoreCase("Y")) {
+                System.out.print("\nInvalid choice. Exiting modification.\n");
+                return false;
             }
             rooms.remove(roomToRemove);
+            releaseRoomNumber(roomToRemove);
             return true;
-        }
-        else if(!roomToRemove.getReservations().isEmpty())
-        {
-        System.out.println("Room cannot be removed. It has active reservations.");
-        }
-        else{
-        System.out.println("Invalid Input");
+        } else if (roomToRemove != null && !roomToRemove.getReservations().isEmpty()) {
+            System.out.println("Room cannot be removed. It has active reservations.");
+        } else {
+            System.out.println("Invalid Input");
         }
         return false;
     }
+
+
+    public boolean removeRoomStraight(String roomName) {
+        Room roomToRemove = findRoom(roomName);
+        if (roomToRemove != null && roomToRemove.getReservations().isEmpty()) {
+            rooms.remove(roomToRemove);
+            releaseRoomNumber(roomToRemove);
+            return true;
+        }
+        return false;
+    }
+
 
     public Room findRoom(String roomName) {
         for (Room room : rooms) {
@@ -142,6 +178,35 @@ public class Hotel {
             }
         }
         return null;
+    }
+
+    public List<Room> getAvailableRooms() {
+        List<Room> availableRooms = new ArrayList<>();
+        for (Room room : rooms) {
+            if (room.getReservations().isEmpty()) {
+
+                availableRooms.add(room);
+            }
+        }
+        return availableRooms;
+    }
+
+    public List<String> guiListRooms() {
+        List<String> roomNames = new ArrayList<>();
+        for (Room room : rooms) {
+            roomNames.add(room.getName());
+        }
+        return roomNames;
+    }
+
+    public List<Room> getRoomsWithReservations() {
+        List<Room> roomsWithReservations = new ArrayList<>();
+        for (Room room : rooms) {
+            if (!room.getReservations().isEmpty()) {
+                roomsWithReservations.add(room);
+            }
+        }
+        return roomsWithReservations;
     }
 
     public boolean removeReservation(String guestName, int checkInDate, int checkOutDate) {
@@ -192,7 +257,7 @@ public class Hotel {
         return total;
     }
 
-    public int roomCount() {
+    public int getRoomCount() {
         int count = 0;
         for (Room room : rooms) {
             count++;
@@ -200,7 +265,25 @@ public class Hotel {
         return count;
     }
 
+    public int getRoomCountType(RoomType type) {
+        int count = 0;
+        for (Room room : getRooms()) {
+            if(room.getRoomType() == type){
+                count++;
+            }
+        }
+        return count;
+    }
+
     public int remainingRoomCount(){
-        return 50 - roomCount();
+        return 50 - getRoomCount();
+    }
+
+    public List<Reservation> getAllReservations() {
+        List<Reservation> allReservations = new ArrayList<>();
+        for (Room room : rooms) {
+            allReservations.addAll(room.getReservations());
+        }
+        return allReservations;
     }
 }

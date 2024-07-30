@@ -309,9 +309,11 @@ public class Main {
                     reservationInformation(hotel, hotelName);
                     break;
                 case 8:
-                    removeCurrentHotel(hotelName);
-                case 9:
                     setDatePriceModifier(hotel);
+                    break;
+                case 9:
+                    removeCurrentHotel(hotelName);
+                    break;
                 case 10:
                     back = true;
                     break;
@@ -357,8 +359,8 @@ public class Main {
         System.out.println("        [5] Remove Reservation");
         System.out.println("        [6] View Hotel Information");
         System.out.println("        [7] View Reservations");
-        System.out.println("        [8] Remove Hotel");
-        System.out.println("        [9] Set Date Price Modifier");
+        System.out.println("        [8] Set Date Price Modifier");
+        System.out.println("        [9] Remove Hotel");
         System.out.println("        [10] Back");
         System.out.print("\nEnter your choice: ");
     }

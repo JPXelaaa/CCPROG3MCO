@@ -51,6 +51,14 @@ public class HotelSystem {
         }
     }
 
+    public List<String> guiListHotels() {
+        List<String> hotelNames = new ArrayList<>();
+        for (Hotel hotel : hotels) {
+            hotelNames.add(hotel.getName());
+        }
+        return hotelNames;
+    }
+
     public void viewHotel(String hotelName) {
         Hotel hotel = findHotel(hotelName);
         if (hotel == null) {
@@ -79,6 +87,31 @@ public class HotelSystem {
     }
     
     public void viewHotelRooms(String hotelName) {
+        Hotel hotel = findHotel(hotelName);
+        if (hotel == null) {
+            System.out.println("Hotel not found.");
+            return;
+        }
+        System.out.println("Rooms: ");
+        System.out.println("\nSTANDARD ROOMS:");
+        for (Room room : hotel.getRooms()) {
+            if(room.getRoomType() == RoomType.STANDARD)
+                System.out.println(" - " + room.getName() + " | Base Price: " + room.calculatePrice(room.getBasePrice(), room.getRoomType()));
+        }
+        System.out.println("\nDELUXE ROOMS:");
+        for (Room room : hotel.getRooms()) {
+            if(room.getRoomType() == RoomType.DELUXE)
+                System.out.println(" - " + room.getName() + " | Base Price: " + room.calculatePrice(room.getBasePrice(), room.getRoomType()));
+        }
+        System.out.println("\nEXECUTIVE ROOMS:");
+        for (Room room : hotel.getRooms()) {
+            if(room.getRoomType() == RoomType.EXECUTIVE)
+                System.out.println(" - " + room.getName() + " | Base Price: " + room.calculatePrice(room.getBasePrice(), room.getRoomType()));
+        }
+
+    }
+
+    public void getHotelRooms(String hotelName) {
         Hotel hotel = findHotel(hotelName);
         if (hotel == null) {
             System.out.println("Hotel not found.");
