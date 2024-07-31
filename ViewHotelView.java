@@ -9,21 +9,45 @@ public class ViewHotelView extends JFrame {
     private JButton reservationInformationButton;
     private JButton exitButton;
 
+    /* ViewHotelView Constructor
+        a. Purpose: Initializes the ViewHotelView with the specified hotel name, sets up the JFrame,
+                    and places the components on the panel.
+        b. Parameters:
+                 - String hotelName: The name of the hotel to be displayed in the view.
+        c. Return type: Constructor (void)
+    */
     public ViewHotelView(String hotelName) {
         super("View Hotel: " + hotelName);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        add(panel);
+        JPanel mainPanel = new JPanel(new BorderLayout());
 
-        placeComponents(panel);
+        JPanel topBar = createBlackBar();
+        JPanel bottomBar = createBlackBar();
+
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setBackground(Color.decode("#FFFDD0"));
+
+        mainPanel.add(topBar, BorderLayout.NORTH);
+        mainPanel.add(bottomBar, BorderLayout.SOUTH);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
+
+        add(mainPanel);
+
+        placeComponents(centerPanel);
 
         setVisible(true);
     }
 
+    /* placeComponents Method
+        a. Purpose: Adds and arranges the buttons and labels on the specified panel.
+        b. Parameters:
+                 - JPanel panel: The panel on which components will be placed.
+        c. Return type: void
+    */
     private void placeComponents(JPanel panel) {
         Dimension buttonSize = new Dimension(300, 40);
         panel.add(Box.createRigidArea(new Dimension(0, 50)));
@@ -58,91 +82,45 @@ public class ViewHotelView extends JFrame {
         panel.add(exitButton);
     }
 
+    /* createBlackBar Method
+        a. Purpose: Creates a JPanel with a fixed height and a background color for use as a top or bottom bar.
+        b. Parameters: None
+        c. Return type: JPanel
+    */
+    private JPanel createBlackBar() {
+        JPanel bar = new JPanel();
+        bar.setBackground(Color.decode("#B7A684"));
+        bar.setPreferredSize(new Dimension(800, 25));  // Fixed height for the bars
+        return bar;
+    }
+    /* setActionListener Method
+        a. Purpose: Sets the action listener for the buttons in the view.
+        b. Parameters:
+                 - ActionListener listener: The action listener to be set for the buttons.
+        c. Return type: void
+    */
     public void setActionListener(ActionListener listener) {
         availableBookedRoomsButton.addActionListener(listener);
         roomInformationButton.addActionListener(listener);
         reservationInformationButton.addActionListener(listener);
         exitButton.addActionListener(listener);
     }
-
+    /* showMessageDialog Method
+         a. Purpose: Displays an information message dialog with the specified message.
+         b. Parameters:
+                  - String message: The message to be displayed in the dialog.
+         c. Return type: void
+     */
     public void showMessageDialog(String message) {
         JOptionPane.showMessageDialog(this, message, "Information", JOptionPane.INFORMATION_MESSAGE);
     }
-
+    /* showErrorDialog Method
+        a. Purpose: Displays an error message dialog with the specified message.
+        b. Parameters:
+                 - String message: The message to be displayed in the dialog.
+        c. Return type: void
+    */
     public void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    public void displayRoomInformation(Hotel hotel) {
-        String roomName = JOptionPane.showInputDialog("Enter room name to view details:");
-        Room room = hotel.findRoom(roomName);
-
-        if (room == null) {
-            showErrorDialog("Room not found.");
-            return;
-        }
-
-        StringBuilder info = new StringBuilder();
-        info.append("Room Name: ").append(room.getName()).append("\n");
-        info.append("Base Price: ").append(room.getBasePrice()).append("\n");
-        info.append("Room Type: ").append(room.getRoomType()).append("\n");
-        info.append("\nAvailability:\n");
-        boolean[] availability = room.getAvailability();
-        for (int day = 1; day <= availability.length; day++) {
-            info.append("Day ").append(day).append(": ").append(availability[day - 1] ? "Available" : "Booked").append("\n");
-        }
-        showMessageDialog(info.toString());
-    }
-
-    public void displayReservationInformation(Hotel hotel) {
-        String roomName = JOptionPane.showInputDialog("Enter room name to view reservations:");
-        Room room = hotel.findRoom(roomName);
-
-        if (room == null) {
-            showErrorDialog("Room not found.");
-            return;
-        }
-
-        List<Reservation> reservations = room.getReservations();
-        if (reservations.isEmpty()) {
-            showErrorDialog("No reservations found for this room.");
-            return;
-        }
-
-        StringBuilder info = new StringBuilder();
-        info.append("Reservations for Room: ").append(room.getName()).append("\n");
-        int index = 1;
-        for (Reservation reservation : reservations) {
-            info.append(index++).append(". Guest: ").append(reservation.getGuestName())
-                    .append(", Check-in: ").append(reservation.getCheckInDate())
-                    .append(", Check-out: ").append(reservation.getCheckOutDate())
-                    .append(", Total Price: ").append(reservation.calculateTotalPrice()).append("\n");
-        }
-
-        String reservationIndexStr = JOptionPane.showInputDialog("Select reservation to view details (1-" + reservations.size() + "):");
-        try {
-            int reservationIndex = Integer.parseInt(reservationIndexStr) - 1;
-            if (reservationIndex < 0 || reservationIndex >= reservations.size()) {
-                showErrorDialog("Invalid reservation selection.");
-                return;
-            }
-
-            Reservation selectedReservation = reservations.get(reservationIndex);
-            info.setLength(0); // Clear the previous information
-            info.append("Reservation Details:\n");
-            info.append("Guest Name: ").append(selectedReservation.getGuestName()).append("\n");
-            info.append("Room: ").append(selectedReservation.getRoom().getName()).append("\n");
-            info.append("Room Type: ").append(selectedReservation.getRoom().getRoomType()).append("\n");
-            info.append("Check-in Date: ").append(selectedReservation.getCheckInDate()).append("\n");
-            info.append("Check-out Date: ").append(selectedReservation.getCheckOutDate()).append("\n");
-            info.append("Total Price: ").append(selectedReservation.calculateTotalPrice()).append("\n");
-            info.append("\nPrice Breakdown:\n");
-            for (int day = selectedReservation.getCheckInDate(); day < selectedReservation.getCheckOutDate(); day++) {
-                info.append("Day ").append(day).append(": ").append(room.getDailyPrice(1)).append("\n");
-            }
-            showMessageDialog(info.toString());
-        } catch (NumberFormatException ex) {
-            showErrorDialog("Invalid input. Please enter a valid number.");
-        }
     }
 }

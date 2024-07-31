@@ -15,20 +15,44 @@ public class MainMenuView extends JFrame {
     private JButton removeHotelButton;
     private JButton exitButton;
 
+    /* MainMenuView Constructor
+                a. Purpose: Initializes the MainMenuView, setting up the UI components and layout.
+                b. Parameters: None
+                c. Return type: None
+*/
     public MainMenuView() {
         super("Hotel Reservation System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        add(panel);
 
-        placeComponents(panel);
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        JPanel topBar = createBlackBar();
+        JPanel bottomBar = createBlackBar();
+
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setBackground(Color.decode("#FFFDD0"));
+
+        mainPanel.add(topBar, BorderLayout.NORTH);
+        mainPanel.add(bottomBar, BorderLayout.SOUTH);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
+
+        add(mainPanel);
+
+        placeComponents(centerPanel);
 
         setVisible(true);
     }
+
+    /* placeComponents Method
+                a. Purpose: Adds and arranges buttons and labels on the provided panel.
+                b. Parameters:
+                         - panel: JPanel
+                c. Return type: void
+*/
 
     private void placeComponents(JPanel panel) {
 
@@ -82,7 +106,12 @@ public class MainMenuView extends JFrame {
         exitButton.setMaximumSize(buttonSize);
         panel.add(exitButton);
     }
-
+    /* setActionListener Method
+                    a. Purpose: Sets the provided ActionListener for all buttons in the view.
+                    b. Parameters:
+                             - listener: ActionListener
+                    c. Return type: void
+    */
     public void setActionListener(ActionListener listener) {
         createHotelButton.addActionListener(listener);
         removeHotelButton.addActionListener(listener);
@@ -92,6 +121,24 @@ public class MainMenuView extends JFrame {
         simulateBookingButton.addActionListener(listener);
         exitButton.addActionListener(listener);
     }
+    /* createBlackBar Method
+                    a. Purpose: Creates a JPanel with a colored background to be used as a bar.
+                    b. Parameters: None
+                    c. Return type: JPanel
+    */
+    private JPanel createBlackBar() {
+        JPanel bar = new JPanel();
+        bar.setBackground(Color.decode("#B7A684"));
+        bar.setPreferredSize(new Dimension(800, 25));  // Fixed height for the bars
+        return bar;
+    }
+
+    /* showManageHotelDialog Method
+                    a. Purpose: Displays a dialog to select a hotel for management from a list of hotel names.
+                    b. Parameters:
+                             - hotelNames: java.util.List<String>
+                    c. Return type: String
+    */
     public String showManageHotelDialog(java.util.List<String> hotelNames) {
         JPanel managePanel = new JPanel();
         managePanel.setLayout(new BoxLayout(managePanel, BoxLayout.Y_AXIS));
@@ -114,6 +161,12 @@ public class MainMenuView extends JFrame {
         return null;
     }
 
+    /* showHotelDialog Method
+                    a. Purpose: Displays a dialog to select a hotel from a list of hotel names.
+                    b. Parameters:
+                             - hotelNames: java.util.List<String>
+                    c. Return type: String
+    */
     public String showHotelDialog(java.util.List<String> hotelNames) {
         DefaultListModel<String> hotelListModel = new DefaultListModel<>();
         for (String hotelName : hotelNames) {
@@ -131,7 +184,13 @@ public class MainMenuView extends JFrame {
         }
         return null;
     }
-
+    /* showSelectHotelDialog Method
+                    a. Purpose: Displays a dialog to select a hotel from a list of hotel names with a custom title.
+                    b. Parameters:
+                             - hotelNames: java.util.List<String>
+                             - title: String
+                    c. Return type: String
+    */
     public String showSelectHotelDialog(java.util.List<String> hotelNames, String title) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -153,7 +212,12 @@ public class MainMenuView extends JFrame {
         }
         return null;
     }
-
+    /* showSelectRoomDialog Method
+                    a. Purpose: Displays a dialog to select a room from a list of rooms.
+                    b. Parameters:
+                             - rooms: java.util.List<Room>
+                    c. Return type: String
+    */
     public String showSelectRoomDialog(java.util.List<Room> rooms) {
         DefaultListModel<String> roomListModel = new DefaultListModel<>();
 
@@ -191,7 +255,11 @@ public class MainMenuView extends JFrame {
         }
         return null;
     }
-
+    /* showBookingDetailsDialog Method
+                    a. Purpose: Displays a dialog to enter booking details and returns a BookingDetails object.
+                    b. Parameters: None
+                    c. Return type: BookingDetails
+    */
     public BookingDetails showBookingDetailsDialog() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(0, 2));
@@ -230,7 +298,11 @@ public class MainMenuView extends JFrame {
         }
         return null;
     }
-
+    /* showInfoLevelDialog Method
+                    a. Purpose: Displays a dialog to select the information level (high-level or low-level).
+                    b. Parameters: None
+                    c. Return type: String
+    */
     public String showInfoLevelDialog() {
         String[] options = {"High-Level Information", "Low-Level Information"};
         int result = JOptionPane.showOptionDialog(this, "Select information level:", "Information Level",
@@ -240,11 +312,21 @@ public class MainMenuView extends JFrame {
         }
         return null;
     }
-
+    /* showMessageDialog Method
+                    a. Purpose: Displays an informational message dialog.
+                    b. Parameters:
+                             - message: String
+                    c. Return type: void
+    */
     public void showMessageDialog(String message) {
         JOptionPane.showMessageDialog(this, message, "Information", JOptionPane.INFORMATION_MESSAGE);
     }
-
+    /* showErrorDialog Method
+                    a. Purpose: Displays an error message dialog.
+                    b. Parameters:
+                             - message: String
+                    c. Return type: void
+    */
     public void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }

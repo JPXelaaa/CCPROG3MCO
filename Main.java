@@ -47,7 +47,11 @@ public class Main {
         }
         System.out.println("Exiting Hotel Reservation System. Goodbye!");
     }
-
+    /* displayMainMenu Method
+          a. Purpose: Displays the main menu of the hotel reservation system.
+          b. Parameters: None
+          c. Return type: void
+      */
     private static void displayMainMenu() {
         System.out.println("\n>=====[Hotel Reservation System]=====<");
         System.out.println();
@@ -61,13 +65,21 @@ public class Main {
         System.out.println();
         System.out.print("Enter your choice: ");
     }
-
+    /* createHotel Method
+      a. Purpose: Prompts the user to enter a hotel name and creates a new hotel in the system.
+      b. Parameters: None
+      c. Return type: void
+  */
     private static void createHotel() {
         System.out.print("Enter hotel name: ");
         String hotelName = scanner.nextLine();
         hotelSystem.createHotel(hotelName);
     }
-
+    /* viewHotel Method
+          a. Purpose: Prompts the user to enter a hotel name and displays the high-level or low-level information of the hotel.
+          b. Parameters: None
+          c. Return type: void
+      */
     private static void viewHotel() {
         String hotelName;
         int option;
@@ -100,7 +112,12 @@ public class Main {
                 System.out.println("Invalid option.");
         }
     }
-
+    /* viewDetailedHotelInformation Method
+          a. Purpose: Displays detailed information of a hotel including available and booked rooms, room information, and reservation information.
+          b. Parameters:
+             - hotel (Hotel): The hotel object whose information is to be displayed.
+          c. Return type: void
+      */
     private static void viewDetailedHotelInformation(Hotel hotel) {
 
         int detailChoice;
@@ -132,7 +149,12 @@ public class Main {
             }
         }
     }
-
+    /* totalAvailableAndBookedRooms Method
+          a. Purpose: Displays the total number of available and booked rooms for a specific date in the hotel.
+          b. Parameters:
+             - hotel (Hotel): The hotel object whose room availability is to be checked.
+          c. Return type: void
+      */
     private static void totalAvailableAndBookedRooms(Hotel hotel) {
         int date, availableRooms, bookedRooms;
 
@@ -157,7 +179,12 @@ public class Main {
         System.out.println("\nTotal available rooms on day " + date + ": " + availableRooms);
         System.out.println("Total booked rooms on day " + date + ": " + bookedRooms);
     }
-
+    /* roomInformation Method
+          a. Purpose: Displays detailed information of a specific room in the hotel including its availability.
+          b. Parameters:
+             - hotel (Hotel): The hotel object whose room information is to be displayed.
+          c. Return type: void
+      */
     private static void roomInformation(Hotel hotel) {
         String roomName;
         Room room;
@@ -182,7 +209,12 @@ public class Main {
             System.out.printf("Day %2d: %s\n", day, availability[day - 1] ? "Available" : "Booked");
         }
     }
-
+    /* manageHotel Method
+          a. Purpose: Allows the user to manage a specific hotel including changing its name, adding/removing rooms,
+                      updating the base price, removing reservations, and viewing hotel/reservation information.
+          b. Parameters: None
+          c. Return type: void
+      */
     private static void manageHotel() {
 
         String hotelName, response;
@@ -322,11 +354,16 @@ public class Main {
             }
         }
     }
-
+    /* removeReservation Method
+          a. Purpose: Removes a reservation.
+          b. Parameters:
+             - hotel (Hotel): The hotel object whose room information is to be displayed.
+          c. Return type: void
+      */
     private static void removeReservation(Hotel hotel) {
 
         int checkInDate, checkOutDate;
-        String guestName, response;
+        String guestName;
 
         System.out.print("Enter guest name: ");
         guestName = scanner.nextLine();
@@ -349,7 +386,11 @@ public class Main {
             System.out.println("Failed to remove reservation.");
         }
     }
-
+    /* displayManageHotelMenu Method
+        a. Purpose: Displays the menu for managing a specific hotel.
+        b. Parameters: None
+        c. Return type: void
+    */
     private static void displayManageHotelMenu() {
         System.out.println("\n>===========[Manage Hotel]===========<");
         System.out.println("\n        [1] Change Hotel Name");
@@ -364,7 +405,11 @@ public class Main {
         System.out.println("        [10] Back");
         System.out.print("\nEnter your choice: ");
     }
-
+    /* simulateBooking Method
+        a. Purpose: Simulates a booking for the provided hotel.
+        b. Parameters: None
+        c. Return type: void
+    */
     private static void simulateBooking() {
 
         Hotel hotel;
@@ -448,7 +493,11 @@ public class Main {
         System.out.println("Total Price: " + reservation.calculateTotalPrice());
     }
 
-
+    /* removeHotel Method
+        a. Purpose: Prompts the user to enter a hotel name and removes the hotel from the system.
+        b. Parameters: None
+        c. Return type: void
+    */
     private static void removeHotel() {
         String hotelName;
         System.out.print("Enter hotel name to remove: ");
@@ -464,7 +513,13 @@ public class Main {
     private static boolean isHotelNameUnique(String newHotelName) {
         return hotelSystem.findHotel(newHotelName) == null;
     }
-
+    
+    /* reservationInformation Method
+          a. Purpose: Displays the reservation information for a specific hotel.
+          b. Parameters:
+             - hotelName (String): Name of the hotel being modified.
+          c. Return type: void
+      */
     private static void reservationInformation(Hotel hotel, String hotelName) {
 
         String roomName;
@@ -520,7 +575,12 @@ public class Main {
             System.out.printf("Day %d: %.2f\n", day, room.getBasePrice());
         }
     }
-
+    /* removeCurrentHotel Method
+        a. Purpose: Similar to the removeHotel but is utilized during the "Manage Hotel Section"
+        b. Parameters:
+           - hotelName (String): Name of the hotel being modified.
+        c. Return type: void
+    */
     private static void removeCurrentHotel(String hotelName) {
         String response;
         System.out.print("Do you want to remove this hotel? [" + hotelName + "] (Y/N): ");

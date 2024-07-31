@@ -26,21 +26,45 @@ public class ManageHotelView extends JFrame {
     private JButton addDeluxeRoomButton;
     private JButton addExecutiveRoomButton;
 
-
+    /* ManageHotelView Constructor
+                    a. Purpose: Constructor to set up the GUI for managing a hotel.
+                    b. Parameters:
+                             - String hotelName: the name of the hotel to be managed.
+                    c. Return type: None (Constructor)
+    */
     public ManageHotelView(String hotelName) {
         super("Manage Hotel");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 700);
         setLocationRelativeTo(null);
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(new EmptyBorder(20, 50, 20, 50));
-        add(panel);
 
-        placeComponents(panel);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        JPanel topBar = createBlackBar();
+        JPanel bottomBar = createBlackBar();
+
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setBorder(new EmptyBorder(20, 50, 20, 50));
+        centerPanel.setBackground(Color.decode("#FFFDD0"));
+
+        mainPanel.add(topBar, BorderLayout.NORTH);
+        mainPanel.add(bottomBar, BorderLayout.SOUTH);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
+
+        add(mainPanel);
+
+        placeComponents(centerPanel);
+
         setVisible(true);
     }
-
+    /* placeComponents Method
+                    a. Purpose: Add and configure components on the provided panel.
+                    b. Parameters:
+                             - JPanel panel: the panel to add components to.
+                    c. Return type: void
+    */
     private void placeComponents(JPanel panel) {
 
         Dimension buttonSize = new Dimension(200, 40);
@@ -111,15 +135,41 @@ public class ManageHotelView extends JFrame {
         backButton.setMaximumSize(buttonSize);
         panel.add(backButton);
     }
-
+    /* createBlackBar Method
+                    a. Purpose: Create a colored bar (panel) with specific styling.
+                    b. Parameters: None
+                    c. Return type: JPanel
+    */
+    private JPanel createBlackBar() {
+        JPanel bar = new JPanel();
+        bar.setBackground(Color.decode("#B7A684"));
+        bar.setPreferredSize(new Dimension(800, 25));  // Fixed height for the bars
+        return bar;
+    }
+    /* showErrorDialog Method
+                    a. Purpose: Display an error dialog with the provided message.
+                    b. Parameters:
+                             - String message: the error message to display.
+                    c. Return type: void
+    */
     public void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
-
+    /* showConfirmationDialog Method
+                    a. Purpose: Display a confirmation dialog with the provided message.
+                    b. Parameters:
+                             - String message: the confirmation message to display.
+                    c. Return type: void
+    */
     public void showConfirmationDialog(String message) {
         JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
     }
-
+    /* setActionListener Method
+                    a. Purpose: Set the action listener for various buttons in the GUI.
+                    b. Parameters:
+                             - ActionListener listener: the action listener to set.
+                    c. Return type: void
+    */
     public void setActionListener(ActionListener listener) {
         changeHotelNameButton.addActionListener(listener);
         addRoomButton.addActionListener(listener);
@@ -132,7 +182,16 @@ public class ManageHotelView extends JFrame {
         setDatePriceButton.addActionListener(listener);
         backButton.addActionListener(listener);
     }
-
+    /* showAddRoomPanel Method
+                    a. Purpose: Display a dialog to add rooms with room count information.
+                    b. Parameters:
+                             - int overallRoomCount: total number of rooms.
+                             - int standardRoomCount: number of standard rooms.
+                             - int deluxeRoomCount: number of deluxe rooms.
+                             - int executiveRoomCount: number of executive rooms.
+                             - ActionListener listener: the action listener for room addition buttons.
+                    c. Return type: void
+    */
     public void showAddRoomPanel(int overallRoomCount, int standardRoomCount, int deluxeRoomCount, int executiveRoomCount, ActionListener listener) {
         JDialog dialog = new JDialog(this, "Add Room", true);
         dialog.setSize(400, 300);
@@ -166,7 +225,12 @@ public class ManageHotelView extends JFrame {
 
         dialog.setVisible(true);
     }
-
+    /* showRemoveRoomDialog Method
+                    a. Purpose: Display a dialog to select and remove a room from the list of available rooms.
+                    b. Parameters:
+                             - List<Room> availableRooms: the list of available rooms.
+                    c. Return type: Room
+    */
     public Room showRemoveRoomDialog(java.util.List<Room> availableRooms) {
         int selectedIndex;
 
@@ -204,7 +268,11 @@ public class ManageHotelView extends JFrame {
         }
         return null;
     }
-
+    /* showUpdateBasePriceDialog Method
+                    a. Purpose: Display a dialog to input and update the base price.
+                    b. Parameters: None
+                    c. Return type: double
+    */
     public double showUpdateBasePriceDialog() {
         String input = JOptionPane.showInputDialog(this, "Enter new base price (must be >= 100):", "Update Base Price", JOptionPane.PLAIN_MESSAGE);
         if (input != null) {
@@ -216,7 +284,12 @@ public class ManageHotelView extends JFrame {
         }
         return -1; // Indicate that the input was cancelled or invalid
     }
-
+    /* showRoomsWithReservationsDialog Method
+                    a. Purpose: Display a dialog to select a room with reservations.
+                    b. Parameters:
+                             - List<Room> roomsWithReservations: the list of rooms with reservations.
+                    c. Return type: Room
+    */
     public Room showRoomsWithReservationsDialog(java.util.List<Room> roomsWithReservations) {
         int result, selectedIndex;
         JPanel managePanel = new JPanel();
@@ -243,6 +316,12 @@ public class ManageHotelView extends JFrame {
         return null;
     }
 
+    /* showReservationsDialog Method
+                    a. Purpose: Display a dialog to select a reservation to remove.
+                    b. Parameters:
+                             - List<Reservation> reservations: the list of reservations.
+                    c. Return type: Reservation
+    */
     public Reservation showReservationsDialog(java.util.List<Reservation> reservations) {
         JPanel managePanel = new JPanel();
         managePanel.setLayout(new BoxLayout(managePanel, BoxLayout.Y_AXIS));
@@ -268,7 +347,12 @@ public class ManageHotelView extends JFrame {
         }
         return null;
     }
-
+    /* showHotelInformation Method
+                    a. Purpose: Display a dialog with detailed information about the hotel.
+                    b. Parameters:
+                             - Hotel hotel: the hotel whose information is to be displayed.
+                    c. Return type: void
+    */
     public void showHotelInformation(Hotel hotel) {
         StringBuilder hotelInfo = new StringBuilder();
         hotelInfo.append("Hotel Name: ").append(hotel.getName()).append("\n");
@@ -302,7 +386,12 @@ public class ManageHotelView extends JFrame {
 
         JOptionPane.showMessageDialog(this, scrollPane, "Hotel Information", JOptionPane.INFORMATION_MESSAGE);
     }
-
+    /* showReservationsDialog Method
+                    a. Purpose: Display a dialog to select a reservation from a specific room.
+                    b. Parameters:
+                             - Room room: the room whose reservations are to be displayed.
+                    c. Return type: Reservation
+    */
     public Reservation showReservationsDialog(Room room) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -328,7 +417,12 @@ public class ManageHotelView extends JFrame {
         }
         return null;
     }
-
+    /* showReservationDetails Method
+                    a. Purpose: Display a dialog with detailed information about a specific reservation.
+                    b. Parameters:
+                             - Reservation reservation: the reservation whose details are to be displayed.
+                    c. Return type: void
+    */
     public void showReservationDetails(Reservation reservation) {
         Room room;
         StringBuilder details = new StringBuilder();
@@ -353,6 +447,12 @@ public class ManageHotelView extends JFrame {
         JOptionPane.showMessageDialog(this, scrollPane, "Reservation Details", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /* showDatePriceModifierDialog Method
+                    a. Purpose: Display a dialog to select a day and modify its price.
+                    b. Parameters:
+                             - double[] modifiers: the array of price modifiers for each day.
+                    c. Return type: int
+    */
     public int showDatePriceModifierDialog(double[] modifiers) {
         String dayStr;
         int dayStore;
@@ -376,6 +476,11 @@ public class ManageHotelView extends JFrame {
         return -1;
     }
 
+    /* showNewPriceModifierDialog Method
+                    a. Purpose: Display a dialog to input and update the price modifier.
+                    b. Parameters: None
+                    c. Return type: double
+    */
     public double showNewPriceModifierDialog() {
         String modifierStr = JOptionPane.showInputDialog(this, "Enter the new price modifier (e.g., 1.1 for 110%, 0.9 for 90%):");
         if (modifierStr != null && !modifierStr.trim().isEmpty()) {
@@ -384,10 +489,15 @@ public class ManageHotelView extends JFrame {
         return -1;
     }
 
-    public void goBackToMainMenu() {
-        this.setVisible(false);
-    }
-
+    /* updateRoomCountLabels Method
+                a. Purpose: Update the labels showing the room counts.
+                b. Parameters:
+                         - int overallRoomCount: total number of rooms.
+                         - int standardRoomCount: number of standard rooms.
+                         - int deluxeRoomCount: number of deluxe rooms.
+                         - int executiveRoomCount: number of executive rooms.
+                c. Return type: void
+*/
     public void updateRoomCountLabels(int overallRoomCount, int standardRoomCount, int deluxeRoomCount, int executiveRoomCount) {
         overallRoomCountLabel.setText("Total Rooms: " + overallRoomCount);
         standardRoomCountLabel.setText("Standard Rooms: " + standardRoomCount);

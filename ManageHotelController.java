@@ -9,6 +9,14 @@ public class ManageHotelController implements ActionListener {
     private String hotelName;
     private Hotel hotel;
 
+    /* ManageHotelController Constructor
+                    a. Purpose: Initializes the ManageHotelController with the view, hotel system, and hotel name.
+                    b. Parameters:
+                             - view: ManageHotelView
+                             - hotelSystem: HotelSystem
+                             - hotelName: String
+                    c. Return type: None
+    */
     public ManageHotelController(ManageHotelView view, HotelSystem hotelSystem, String hotelName) {
         this.view = view;
         this.hotelSystem = hotelSystem;
@@ -16,15 +24,27 @@ public class ManageHotelController implements ActionListener {
         this.hotel = hotelSystem.findHotel(hotelName);
         view.setActionListener(this);
     }
-
+    /* updateRoomCounts Method
+                    a. Purpose: Updates the room count labels in the view with the current room counts.
+                    b. Parameters: None
+                    c. Return type: void
+    */
     private void updateRoomCounts() {
         int overallRoomCount = hotel.getRoomCount();
         int standardRoomCount = hotel.getRoomCountType(RoomType.STANDARD);
         int deluxeRoomCount = hotel.getRoomCountType(RoomType.DELUXE);
         int executiveRoomCount = hotel.getRoomCountType(RoomType.EXECUTIVE);
+        if(overallRoomCount == 50){
+            view.showErrorDialog("Maximum Amount of Rooms Reached!");
+        }
         view.updateRoomCountLabels(overallRoomCount, standardRoomCount, deluxeRoomCount, executiveRoomCount);
     }
-
+    /* actionPerformed Method
+                    a. Purpose: Handles action events triggered by the view's buttons.
+                    b. Parameters:
+                             - e: ActionEvent
+                    c. Return type: void
+    */
     @Override
     public void actionPerformed(ActionEvent e) {
         List<String> hotelNames;
@@ -40,13 +60,19 @@ public class ManageHotelController implements ActionListener {
         switch (e.getActionCommand()) {
             case "Change Hotel Name":
                 hotelNewName = JOptionPane.showInputDialog("Enter hotel name:");
-                if (hotelNewName != null && !hotelNewName.trim().isEmpty()) {
-                    hotel.setName(hotelNewName);
-                    hotelName = hotelNewName;
+                if (hotelNewName.trim().isEmpty()) {
+                view.showErrorDialog("Please fill out the field.");
+                break;
                 }
-                else if (hotelNewName != null) {
-                    view.showErrorDialog("Please fill out the field.");
-                    break;
+                response = JOptionPane.showConfirmDialog(null, "Do you want to change the name to: " +hotelNewName+ "?", "Confirm", JOptionPane.YES_NO_OPTION);
+                if (response == JOptionPane.YES_OPTION) {
+                    if (hotelNewName != null && !hotelNewName.trim().isEmpty()) {
+                        hotel.setName(hotelNewName);
+                        hotelName = hotelNewName;
+                        view.showConfirmationDialog("Hotel Name Successfully Changed");
+                    }
+                    else {
+                    }
                 }
                 break;
             //---------------------------------ROOM SECTION----------------------------
@@ -56,6 +82,7 @@ public class ManageHotelController implements ActionListener {
                 deluxeRoomCount = hotel.getRoomCountType(RoomType.DELUXE);
                 executiveRoomCount = hotel.getRoomCountType(RoomType.EXECUTIVE);
                 view.showAddRoomPanel(overallRoomCount, standardRoomCount, deluxeRoomCount, executiveRoomCount, this);
+
                 break;
             case "Add Standard Room":
                 hotel.addRoom(RoomType.STANDARD, 1);
@@ -107,8 +134,11 @@ public class ManageHotelController implements ActionListener {
                 if (roomWithReservations != null) {
                     Reservation reservationToRemove = view.showReservationsDialog(roomWithReservations.getReservations());
                     if (reservationToRemove != null) {
-                        hotel.removeReservation(reservationToRemove.getGuestName(), reservationToRemove.getCheckInDate(), reservationToRemove.getCheckOutDate());
-                        view.showConfirmationDialog("Reservation removed successfully.");
+                        response = JOptionPane.showConfirmDialog(null, "Do you want to remove this reservation?", "Confirm", JOptionPane.YES_NO_OPTION);
+                        if (response == JOptionPane.YES_OPTION) {
+                            hotel.removeReservationStraight(reservationToRemove.getGuestName(), reservationToRemove.getCheckInDate(), reservationToRemove.getCheckOutDate());
+                            view.showConfirmationDialog("Reservation removed successfully.");
+                        }
                     }
                 }
                 break;
@@ -138,21 +168,28 @@ public class ManageHotelController implements ActionListener {
                 if (selectedDay != -1) {
                     double newModifier = view.showNewPriceModifierDialog();
                     if (newModifier >= 0) {
-                        hotel.setPriceModifier(selectedDay, newModifier);
-                        view.showConfirmationDialog("Price modifier set for day " + selectedDay);
+                        response = JOptionPane.showConfirmDialog(null, "Do you want to change the price of Day: " + selectedDay + "?", "Confirm", JOptionPane.YES_NO_OPTION);
+                        if (response == JOptionPane.YES_OPTION) {
+                            hotel.setPriceModifier(selectedDay, newModifier);
+                            view.showConfirmationDialog("Price modifier set for day " + selectedDay);
+                        }
                     } else {
                         view.showErrorDialog("Invalid price modifier entered.");
                     }
                 }
                 break;
             case "Remove Hotel":
-                if (hotelSystem.removeHotel(hotelName)) {
-                    JOptionPane.showMessageDialog(null, "Hotel removed successfully.");
-                    hotelName = null;  // Reset hotelName since it's removed
-                    hotel = null;      // Reset hotel reference
-                } else {
-                    JOptionPane.showMessageDialog(null, "Hotel not found. Failed to remove hotel.");
+                response = JOptionPane.showConfirmDialog(null, "Do you want to remove this hotel? ", "Confirm", JOptionPane.YES_NO_OPTION);
+                if (response == JOptionPane.YES_OPTION) {
+                    if (hotelSystem.removeHotel(hotelName)) {
+                        JOptionPane.showMessageDialog(null, "Hotel removed successfully.");
+                        hotelName = null;  // Reset hotelName since it's removed
+                        hotel = null;      // Reset hotel reference
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Hotel not found. Failed to remove hotel.");
+                    }
                 }
+
             case "Back":
                 view.dispose(); // Close the ManageHotelView
                 MainMenuView mainMenuView = new MainMenuView();

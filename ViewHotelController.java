@@ -8,12 +8,29 @@ public class ViewHotelController implements ActionListener {
     private HotelSystem hotelSystem;
     private String hotelName;
 
+    /* ViewHotelController Constructor
+        a. Purpose: Initializes the ViewHotelController with the specified view, hotel system, and hotel name,
+                    and sets the action listener for the view.
+        b. Parameters:
+                 - ViewHotelView view: The view component of the MVC architecture.
+                 - HotelSystem hotelSystem: The system component managing hotel operations.
+                 - String hotelName: The name of the hotel.
+        c. Return type: Constructor (void)
+    */
+
     public ViewHotelController(ViewHotelView view, HotelSystem hotelSystem, String hotelName) {
         this.view = view;
         this.hotelSystem = hotelSystem;
         this.hotelName = hotelName;
         view.setActionListener(this);
     }
+    /* actionPerformed Method
+        a. Purpose: Handles action events triggered by user interactions with the view, such as selecting
+                    options from a menu or clicking buttons.
+        b. Parameters:
+                 - ActionEvent e: The event triggered by the user's action.
+        c. Return type: void
+    */
 
     @Override
     public void actionPerformed(ActionEvent e) {

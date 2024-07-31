@@ -8,18 +8,26 @@ public class MainMenuController implements ActionListener {
     private MainMenuView view;
     private HotelSystem hotelSystem;
 
+    /* MainMenuController Constructor
+                    a. Purpose: Initializes the MainMenuController with the given view and hotel system, setting up the action listeners for the view.
+                    b. Parameters:
+                             - view: MainMenuView
+                             - hotelSystem: HotelSystem
+                    c. Return type: None
+    */
+
     public MainMenuController(MainMenuView view, HotelSystem hotelSystem) {
         this.view = view;
         this.hotelSystem = hotelSystem;
 
         view.setActionListener(this);
-        //    this.view.addViewHotelListener(new ViewHotelListener());
-        //    this.view.addManageHotelListener(new ManageHotelListener());
-        //    this.view.addSimulateBookingListener(new SimulateBookingListener());
-        //    this.view.addRemoveHotelListener(new RemoveHotelListener());
-        //   this.view.addExitListener(new ExitListener());
     }
-
+    /* actionPerformed Method
+                        a. Purpose: Handles action events triggered by user interactions with the main menu, performing corresponding operations based on the action command.
+                        b. Parameters:
+                                 - e: ActionEvent
+                        c. Return type: void
+        */
     @Override
     public void actionPerformed(ActionEvent e) {
         Hotel hotel;
@@ -96,10 +104,12 @@ public class MainMenuController implements ActionListener {
                     break;
                 }
                 selectedHotel = view.showManageHotelDialog(hotelNames);
+                if (selectedHotel != null) {
                 view.setVisible(false);
                 ManageHotelView manageHotelView = new ManageHotelView(selectedHotel);
                 new ManageHotelController(manageHotelView, hotelSystem, selectedHotel);
                 manageHotelView.setVisible(true);
+                }
 
                 break;
             case "Simulate Booking":
@@ -147,7 +157,10 @@ public class MainMenuController implements ActionListener {
                 if (bookingDetails == null) {
                     break;
                 }
-
+                if(bookingDetails.getGuestName().isEmpty()){
+                    view.showErrorDialog("Please enter a guest name.");
+                    break;
+                }
                 if (!rm.isAvailable(bookingDetails.getCheckInDate(), bookingDetails.getCheckOutDate())) {
                     view.showErrorDialog("Room is not available for the selected dates.");
                     break;
@@ -191,9 +204,10 @@ public class MainMenuController implements ActionListener {
                     }
                     JOptionPane.showMessageDialog(null, hotelsList.toString());
                 }
+                break;
             case "Exit":
                 confirm = JOptionPane.showConfirmDialog(view, "Are you sure you want to exit?", "Exit Confirmation", JOptionPane.YES_NO_OPTION);
-                if (confirm == JOptionPane.YES_OPTION) { 
+                if (confirm == JOptionPane.YES_OPTION) {
                     System.exit(0);
                 }
                 break;
